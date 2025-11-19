@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -51,6 +52,37 @@ public class Main {
             System.out.println(d.toJson());
         }
 
-        for(Document d : col.find(Filters.regex("name","")));
+        for(Document d : col.find(Filters.regex("name","Cafe"))){
+            System.out.println(d.toJson());
+        }
+
+        for(Document d : col.find(Filters.in("categories","Postres"))){
+            System.out.println(d.toJson());
+        }
+
+        for(Document d : col.find(Filters.and(Filters.gte("stars",3),Filters.lte("stars",4.3)))){
+            System.out.println(d.toJson());
+        }
+
+        for(Document d : col.find(Filters.regex("name","^T"))){
+            System.out.println(d.toJson());
+        }
+
+        col.updateOne(Filters.eq("name","Morning Brew"), Updates.set("stars",4.5));
+
+        col.updateMany(Filters.in("categories","Bakery","Desayuno"),Updates.inc("stars",0.2));
+
+        col.updateOne(
+                Filters.eq("name","cafe de la plaza"),
+                Updates.combine(
+                        Updates.set("phone","555-111-2222"),
+                        Updates.set("open",true))
+        );
+
+        col.deleteOne(Filters.eq("name","Espresso Express"));
+
+        col.deleteMany(Filters.lt("stars",4));
+
+        col.deleteMany(Filters.in("categories","Takeaway","Infusiones"));
     }
 }
